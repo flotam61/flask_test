@@ -1,12 +1,10 @@
-from flask import Flask
-
 from flask import Flask, jsonify, request
 from flask.views import MethodView
 from sqlalchemy.orm import declarative_base, sessionmaker
 from sqlalchemy import Column, String, Text, DateTime, Integer, func, create_engine
 
 app = Flask('app')
-PG_GSN = 'postgresql://postgres:deman1997123@127.0.0.1/avito'
+PG_GSN = 'postgresql://flores:zxczxc@localhost:5432/avito'
 
 engine = create_engine(PG_GSN)
 Session = sessionmaker(bind=engine)
@@ -24,10 +22,10 @@ class Ad(Base):
 
 
 def get_ad(session: Session, user_id: int):
-    ad = session.query(Ad).get(ad_id)
+    ad = session.query(Ad).get(user_id)
     if ad is None:
         pass
-
+    return ad
 
 Base.metadata.create_all(engine)
 
@@ -49,7 +47,7 @@ class AdView(MethodView):
             ad = Ad(article=article, text=text, owner=owner)
             session.add(ad)
             session.commit()
-            return {'id': ad.id}
+            return jsonify({'id': ad.id})
 
     def patch(self, ad_id: int):
         json_data = request.json
